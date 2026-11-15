@@ -173,6 +173,24 @@
 
 ---
 
+**20. Zapytanie:** Popraw raport zgodnie z czwartą rundą recenzji; sekcję 2.2 zostaw bez zmian, usuń definicję agenta AlphaBeta z 3.1.3 i niepotrzebny opis MDP/POMDP. *(wklejone uwagi recenzji)*
+
+**Odpowiedź:** Model dodał regułę wyboru ruchu (wzór 2), bo agent nie widział nagrody za własny ruch: nagroda $r_{t+1}$ została rozdzielona na część za odpowiedź przeciwnika $r^{\text{op}}_t$ i część za ruch agenta $r^{\text{ag}}_{t+1}$, a do oceny akcji dodano składnik $\beta\Phi(s'(a))$ znoszący przesunięcie od kształtowania nagrody. Poprawił też drobne usterki (normalizacja $T_{\max}$ i $L_{\max}$, podpis rysunku z obrotem planszy, podwójny nagłówek „Literatura”). Na prośbę autora przywrócił jego tekst sekcji 2.2, usunął definicję AlphaBeta z 3.1.3 (przeniesioną do pliku na sekcję 4.3) i skrócił akapit o MDP do dwóch zdań.
+
+---
+
+**21. Zapytanie:** Przeciwnik nie ma być losowany z puli — agent uczy się najpierw z agentem losowym, potem z AlphaBeta o głębokości 2, a potem z wersjami samego siebie. Usuń zdanie o przybliżeniu MDP i wzór na $G_t$.
+
+**Odpowiedź:** Model zastąpił losowanie przeciwników z puli trzema etapami treningu (agent losowy → AlphaBeta o głębokości 2 → gra z drugim modelem lub zamrożoną wcześniejszą wersją), z przejściem do kolejnego etapu po wygrywaniu większości partii. Usunął zdanie o przybliżeniu MDP oraz wzór na zwrot $G_t$, zastępując go jednym zdaniem o dyskontowaniu ($\gamma = 0{,}99$) i liczeniu kroków agenta, i poprawił odwołania do usuniętego wzoru.
+
+---
+
+**22. Zapytanie:** Popraw raport zgodnie z piątą rundą recenzji (brak $\gamma$ we wzorze 2, remis na ruchu agenta), zmień w 2.2 liczbę partii każdym kolorem na 250 i dodaj do oceny przeciwnika, z którym agent się nie uczył. *(wklejone uwagi recenzji)*
+
+**Odpowiedź:** Model sprawdził rachunek i potwierdził uwagi recenzenta: wartość $V(s')$ jest przesunięta o jeden krok względem nagrody za ruch, więc reguła wyboru ma postać $a_t = \arg\max[r^{\text{ag}}(s_t,a) + \gamma(\beta\Phi(s'(a)) + V(s'(a)))]$. Usunął zastrzeżenie „przy $\gamma = 1$”, bo zdyskontowana suma nagród za formacje teleskopuje się dokładnie do $-\beta\Phi(s'_0)$ dla dowolnego $\gamma$. Remis na limicie trafia teraz do tej części nagrody, w której półruchu limit został osiągnięty (także do $r^{\text{ag}}$). W 2.2 zmieniono liczbę partii na 250 każdym kolorem (2 × 250 = 500) i dodano pomocniczą ocenę przeciwko AlphaBeta o głębokości 3, z którym agent nie grał w trakcie uczenia.
+
+---
+
 ## Elementy zmienione lub odrzucone przez autora
 
 - **Odrzucone:**
@@ -181,14 +199,15 @@
   - odwołania do TD-Gammon i AlphaZero wraz z powiązanymi pozycjami bibliografii,
   - bezpośrednie nazwy klas, funkcji i ścieżek plików z kodu źródłowego,
   - parametr ryzyka $\kappa$ jako wejście sieci,
-  - uczenie na pełnym zwrocie (zastąpione przez TD($\lambda$)).
+  - uczenie na pełnym zwrocie (zastąpione przez TD($\lambda$)),
+  - definicja agenta AlphaBeta w sekcji 3.1.3, rozbudowany opis MDP/POMDP, zdanie o przybliżeniu MDP oraz wzór na zwrot $G_t$.
 - **Zmienione:**
-  - schemat przeciwników w treningu (zastąpienie *self-play* jednej sieci rywalizacją dwóch modeli: uczącego się lub zamrożonego),
+  - schemat przeciwników w treningu (najpierw rywalizacja dwóch modeli z pulą przeciwników losowanych w proporcjach, ostatecznie trzy etapy: agent losowy → AlphaBeta o głębokości 2 → gra z samym sobą),
   - podział sekcji 3.1 na trzy podrozdziały oraz formatowanie podpisów tabel i rysunków na wzór wcześniejszego sprawozdania,
   - umiejscowienie Rysunku 3.1 (przeniesienie z sekcji 3.3 do sekcji 3.1.1) oraz zmiana formatu wygenerowanych grafik z PDF na PNG (300 dpi),
   - doprecyzowanie uzasadnień wszystkich parametrów liczbowych oraz zapisu równań z ujednoliconą listą symboli,
   - przeredagowanie opisu braku wartości $-1$ w obserwacji oraz podpisu Rysunku 3.2,
   - poprawki po zewnętrznej recenzji (pkt 15 i 17),
-  - kryteria sukcesu i sposób oceny (pkt 18: próg 85% z agentem losowym, powyżej 50% z AlphaBeta o głębokości 2).
-- **Błędy modelu:** przypadkowe usunięcie wpisu bibliograficznego (Chorus) przy edycji pliku `.tex`, skutkujące znakiem zapytania `[?]` w skompilowanym dokumencie — błąd został zgłoszony przez autora i natychmiast naprawiony przez model. Recenzja (pkt 15 i 17) wykazała ponadto błędne jednostki przy $\gamma$, błędne uzasadnienie $\beta$, zbyt szerokie przedstawienie wyniku Ng i in. oraz usunięcie przez model legalnego *sumito* 3:1 — wszystko poprawione.
+  - kryteria sukcesu i sposób oceny (pkt 18 i 22: próg 85% z agentem losowym, powyżej 50% z AlphaBeta o głębokości 2, serie po 2 × 250 partii, pomocnicza ocena z AlphaBeta o głębokości 3).
+- **Błędy modelu:** przypadkowe usunięcie wpisu bibliograficznego (Chorus) przy edycji pliku `.tex`, skutkujące znakiem zapytania `[?]` w skompilowanym dokumencie — błąd został zgłoszony przez autora i natychmiast naprawiony przez model. Recenzja (pkt 15 i 17) wykazała ponadto błędne jednostki przy $\gamma$, błędne uzasadnienie $\beta$, zbyt szerokie przedstawienie wyniku Ng i in. oraz usunięcie przez model legalnego *sumito* 3:1, a kolejne rundy (pkt 20 i 22) — brak nagrody za własny ruch agenta przy wyborze akcji, brak $\gamma$ w regule wyboru ruchu oraz niepotrzebne zastrzeżenie „przy $\gamma = 1$” — wszystko poprawione.
 - **Do weryfikacji przez autora:** wartości parametrów (wagi formacji, $\beta$, $\lambda$, proporcje startów) są wstępne i zostaną dostrojone po implementacji i eksperymentach.
